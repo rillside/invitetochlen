@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Системное Предупреждение</title>
+    <style>
+        /* Основные стили */
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .terminal {
+            width: 80%;
+            max-width: 800px;
+            border: 1px solid #0f0;
+            padding: 20px;
+            box-shadow: 0 0 20px #0f0;
+            position: relative;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #111;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 30px;
+            background-color: #0f0;
+            width: 0%;
+            transition: width 0.3s;
+            text-align: center;
+            line-height: 30px;
+            color: black;
+            font-weight: bold;
+        }
+        
+        .code {
+            text-align: left;
+            height: 200px;
+            overflow-y: scroll;
+            background-color: #111;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #333;
+        }
+        
+        button {
+            background-color: #0f0;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        
+        button:hover {
+            background-color: #0d0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .red {
+            color: #f00;
+        }
+        
+        .command {
+            color: #0ff;
+        }
+        
+        .response {
+            color: #0f0;
+        }
+
+        /* Стили для современного сообщения об ошибке */
+        .modern-error {
+            background: #f8f9fa;
+            color: #202124;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            text-align: center;
+        }
+        
+        .modern-error-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            color: #5f6368;
+        }
+        
+        .modern-error-title {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        
+        .modern-error-desc {
+            font-size: 15px;
+            color: #5f6368;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .modern-error-code {
+            background: #f1f3f4;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            color: #3c4043;
+            margin-bottom: 24px;
+            text-align: left;
+            display: inline-block;
+        }
+        
+        .modern-error-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .modern-error-btn:hover {
+            background: #1765cc;
+        }
+        
+        .modern-error-btn:disabled {
+            background: #e8eaed;
+            color: #5f6368;
+            cursor: not-allowed;
+        }
+        
+        .modern-error-footer {
+            margin-top: 24px;
+            font-size: 13px;
+            color: #9aa0a6;
+        }
+        
+        .connection-animation {
+            width: 100%;
+            height: 4px;
+            background: #e8eaed;
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .connection-progress {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: #1a73e8;
+            animation: connecting 2s infinite;
+        }
+        
+        @keyframes connecting {
+            0% { width: 0%; left: 0; }
+            50% { width: 100%; left: 0; }
+            100% { width: 0%; left: 100%; }
+        }
+
+        /* Анимация мигающего предупреждения */
+        .warning-pulse {
+            animation: warningPulse 1.5s infinite alternate;
+        }
+
+        @keyframes warningPulse {
+            from { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+            to { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран 1: Начальное предупреждение -->
+    <div class="container" id="screen1">
+        <div class="terminal warning-pulse">
+            <h1>СИСТЕМНОЕ ПРЕДУПРЕЖДЕНИЕ <span class="blink">_</span></h1>
+            <p>ВНИМАНИЕ: Обнаружен несанкционированный доступ</p>
+            <p>Ваша система может быть под угрозой</p>
+            <button id="startBtn">ЗАПУСТИТЬ ПРОВЕРКУ БЕЗОПАСНОСТИ</button>
+        </div>
+    </div>
+    
+    <!-- Экран 2: Процесс сканирования -->
+    <div class="container hidden" id="screen2">
+        <div class="terminal">
+            <h1>ЗАПУЩЕНА ПРОВЕРКА БЕЗОПАСНОСТИ <span class="blink">_</span></h1>
+            <div class="code" id="scanOutput"></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <p>Сканирование уязвимостей системы...</p>
+        </div>
+    </div>
+    
+    <!-- Экран 3: Сообщение о взломе -->
+    <div class="container hidden" id="screen3">
+        <div class="terminal">
+            <h1 class="red">ДОСТУП ПОЛУЧЕН <span class="blink">_</span></h1>
+            <div class="code">
+                <p>> <span class="command">bypass_security --target=USER</span></p>
+                <p class="response">[УСПЕХ] Защита успешно обойдена</p>
+                <p>> <span class="command">access_personal_data --all</span></p>
+                <p class="response">[УСПЕХ] Доступ к личным данным: 100%</p>
+                <p>> <span class="command">download_browser_history --full</span></p>
+                <p class="response">[УСПЕХ] История браузера скопирована</p>
+                <p>> <span class="command">capture_webcam --activate</span></p>
+                <p class="response">[УСПЕХ] Камера активирована</p>
+                <p>> <span class="command">encrypt_files --all --ransom</span></p>
+                <p class="response">[УСПЕХ] Файлы зашифрованы</p>
+                <p>> <span class="command">exfiltrate_data --server=darknet</span></p>
+                <p class="response">[В ПРОЦЕССЕ] Передача данных...</p>
+            </div>
+            <h2 class="red">ВАША СИСТЕМА ВЗЛОМАНА</h2>
+            <p>Все ваши данные были скопированы</p>
+            <p>Ваш IP-адрес: <span id="ipAddress">загрузка...</span></p>
+            <p>Соединение будет разорвано через <span id="countdown">10</span> секунд</p>
+        </div>
+    </div>
+    
+    <!-- Экран 4: Сообщение об отключении интернета -->
+    <div class="container hidden" id="screen4">
+        <div class="modern-error">
+            <div class="modern-error-icon">⚠️</div>
+            <h1 class="modern-error-title">Нет подключения к интернету</h1>
+            <p class="modern-error-desc">Не удается установить соединение с интернетом. Проверьте настройки сети или подключение к интернету.</p>
+            
+            <div class="connection-animation">
+                <div class="connection-progress"></div>
+            </div>
+            
+            <div class="modern-error-code">
+                <div>Ошибка: NET::ERR_CONNECTION_TERMINATED</div>
+                <div>Код: 0x8B1F2025</div>
+                <div>Протокол: HTTP/3</div>
+                <div>IP: <span id="modernIp">загрузка...</span></div>
+            </div>
+            
+            <button class="modern-error-btn" id="modernReloadBtn">Повторить попытку</button>
+            <p class="modern-error-footer">Последняя проверка: <span id="errorTime"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Элементы
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const screen3 = document.getElementById('screen3');
+        const screen4 = document.getElementById('screen4');
+        const startBtn = document.getElementById('startBtn');
+        const reloadBtn = document.getElementById('modernReloadBtn');
+        const scanOutput = document.getElementById('scanOutput');
+        const progressBar = document.getElementById('progressBar');
+        const ipAddress = document.getElementById('ipAddress');
+        const modernIp = document.getElementById('modernIp');
+        const countdown = document.getElementById('countdown');
+        const errorTime = document.getElementById('errorTime');
+
+        // Фразы для процесса взлома
+        const hackPhrases = [
+            "Поиск уязвимостей в системе...",
+            "Анализ сетевых интерфейсов...",
+            "Обход антивирусной защиты...",
+            "Получение прав администратора...",
+            "Доступ к камере... УСПЕШНО",
+            "Активация микрофона... УСПЕШНО",
+            "Поиск сохраненных паролей...",
+            "Доступ к истории браузера... УСПЕШНО",
+            "Сканирование документов...",
+            "Обнаружение файлов с паролями...",
+            "Установка бэкдора...",
+            "Создание точки восстановления...",
+            "Шифрование личных файлов...",
+            "Подключение к серверу в даркнете..."
+        ];
+
+        // Получаем IP адрес
+        async function getIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error("Ошибка получения IP:", error);
+                return "192.168." + Math.floor(Math.random() * 255) + "." + Math.floor(Math.random() * 255);
+            }
+        }
+
+        // Запуск процесса "взлома"
+        startBtn.addEventListener('click', async () => {
+            screen1.classList.add('hidden');
+            screen2.classList.remove('hidden');
+            
+            // Имитация процесса взлома
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 8;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${Math.floor(progress)}%`;
+                
+                // Добавляем случайные сообщения о взломе
+                if (Math.random() > 0.6 && hackPhrases.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * hackPhrases.length);
+                    const phrase = hackPhrases.splice(randomIndex, 1)[0];
+                    scanOutput.innerHTML += `<p>${phrase}</p>`;
+                    scanOutput.scrollTop = scanOutput.scrollHeight;
+                }
+                
+                // Завершение процесса взлома
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        screen2.classList.add('hidden');
+                        screen3.classList.remove('hidden');
+                        showHackComplete();
+                    }, 1500);
+                }
+            }, 300);
+        });
+
+        // Процесс после завершения "взлома"
+        async function showHackComplete() {
+            const ip = await getIP();
+            ipAddress.textContent = ip;
+            modernIp.textContent = ip;
+            
+            // Устанавливаем текущее время для сообщения об ошибке
+            updateTime();
+            
+            // Обратный отсчет до "разрыва соединения"
+            let seconds = 10;
+            const timer = setInterval(() => {
+                seconds--;
+                countdown.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    countdown.textContent = "СОЕДИНЕНИЕ РАЗОРВАНО";
+                    
+                    // Показываем сообщение об отключении интернета
+                    setTimeout(() => {
+                        screen3.classList.add('hidden');
+                        screen4.classList.remove('hidden');
+                        setupReloadButton();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        // Обновление времени в сообщении об ошибке
+        function updateTime() {
+            const now = new Date();
+            errorTime.textContent = 
+                `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+
+        // Настройка поведения кнопки "Повторить"
+        function setupReloadButton() {
+            let attempts = 0;
+            
+            reloadBtn.addEventListener('click', () => {
+                if (attempts >= 2) {
+                    reloadBtn.disabled = true;
+                    reloadBtn.textContent = "Не удалось восстановить соединение";
+                    return;
+                }
+                
+                attempts++;
+                reloadBtn.disabled = true;
+                reloadBtn.textContent = "Попытка подключения...";
+                
+                // Имитация попытки подключения
+                setTimeout(() => {
+                    reloadBtn.disabled = false;
+                    reloadBtn.textContent = "Повторить попытку";
+                    updateTime();
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
